@@ -164,6 +164,9 @@ class OpenAILLM(AsyncLLM):
             description="The structured output format to use across all the generations.",
         )
     )
+    extra_body: Optional[RuntimeParameter[Dict[str, Any]]] = Field(
+        default=None, description="Extra body parameters to pass to the OpenAI API."
+    )
 
     _api_key_env_var: str = PrivateAttr(_OPENAI_API_KEY_ENV_VAR_NAME)
     _client: "OpenAI" = PrivateAttr(None)
@@ -290,6 +293,9 @@ class OpenAILLM(AsyncLLM):
             "top_p": top_p,
             "stop": stop,
         }
+
+        if self.extra_body:
+            kwargs["extra_body"] = self.extra_body
 
         if response_format is not None:
             if response_format not in ["text", "json", "json_object"]:
